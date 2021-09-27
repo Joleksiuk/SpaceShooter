@@ -58,7 +58,7 @@ void Game::initGUI()
 	if (this->pointsFont.loadFromFile("Fonts/font.ttf")) {
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
-	if (this->gameOverFont.loadFromFile("Fonts/font.ttf")) {
+	if (this->gameOverFont.loadFromFile("Fonts/chunk.otf")) {
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
 	//init game over text
