@@ -154,17 +154,17 @@ void Game::updatePollEvents()
 void Game::updateInput()
 {
 	//Move the player
-	if (Keyboard::isKeyPressed(Keyboard::Key::A))
+	if (Keyboard::isKeyPressed(Keyboard::Key::A) || Keyboard::isKeyPressed(Keyboard::Key::Left))
 		this->player->move(*this->window,-1.f, 0.f);
-	if (Keyboard::isKeyPressed(Keyboard::Key::D))
+	else if (Keyboard::isKeyPressed(Keyboard::Key::D) || Keyboard::isKeyPressed(Keyboard::Key::Right))
 		this->player->move(*this->window,1.f, 0.f);
-	if (Keyboard::isKeyPressed(Keyboard::Key::W))
+	if (Keyboard::isKeyPressed(Keyboard::Key::W) || Keyboard::isKeyPressed(Keyboard::Key::Up))
 		this->player->move(*this->window,0.f, -1.f);
-	if (Keyboard::isKeyPressed(Keyboard::Key::S))
+	else if (Keyboard::isKeyPressed(Keyboard::Key::S) || Keyboard::isKeyPressed(Keyboard::Key::Down))
 		this->player->move(*this->window,0.f, 1.f);
 
 	//Shooting
-	if (Mouse::isButtonPressed(Mouse::Left) && this->player->canAttack() )
+	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && this->player->canAttack() )
 	{
 		this->bullets.push_back( new Bullet(
 				this->textures["BULLET"],
