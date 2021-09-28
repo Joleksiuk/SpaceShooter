@@ -19,6 +19,7 @@ class Game
 {
 private:
 
+	//Window atributes
 	RenderWindow* window;
 	VideoMode videoMode;
 	
@@ -35,16 +36,19 @@ private:
 	float spawnTimer;
 	float spawnTimerMax;
 
-	//Font
-	Font pointsFont;
-	Text pointText;
+	//Bullets
+	std::vector<Bullet*> bullets;
 
+	//Fonts
+	Font pointsFont;
 	Font gameOverFont;
+
+	//Texts
+	Text pointText;
 	Text gameOverText;
 	
 	//Resources
 	std::map<std::string,sf::Texture*> textures;
-	std::vector<Bullet*> bullets;
 	std::vector<Texture*> shipTextures;
 
 	//Graphics
@@ -57,10 +61,11 @@ private:
 	void initTextures();
 	void initPlayer();
 	void initEnemies();
-	void initGUI();
+	void initFontsAndTexts();
 	void initHealthBar();
 
 public:
+	//Constructor / Destructor
 	Game();
 	virtual ~Game();
 
@@ -70,9 +75,9 @@ public:
 	
 	//******UPDATE*******
 	void update();
+
 	void updatePollEvents();
 	void updateInput();
-
 	void updateSpawnEnemies();
 	void updateEnemiesAndCombat();
 	void updateBullets();
@@ -81,6 +86,7 @@ public:
 
 	//******RENDER*******
 	void render();
+
 	void renderGUI();
 	void renderBackground();
 

@@ -52,13 +52,13 @@ void Game::initEnemies()
 	this->spawnTimer = this->spawnTimerMax;
 }
 
-void Game::initGUI()
+void Game::initFontsAndTexts()
 {
 	//loading font
-	if (this->pointsFont.loadFromFile("Fonts/chunk.otf")) {
+	if (this->pointsFont.loadFromFile("Fonts/font.ttf")) {
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
-	if (this->gameOverFont.loadFromFile("Fonts/chunk.otf")) {
+	if (this->gameOverFont.loadFromFile("Fonts/font.ttf")) {
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
 	//init game over text
@@ -84,7 +84,7 @@ Game::Game()
 {
 	this->gameOver = false;
 	this->initWindow();
-	this->initGUI();
+	this->initFontsAndTexts();
 	this->initTextures();
 	this->initBackground();
 	this->initPlayer();

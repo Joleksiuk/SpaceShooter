@@ -1,12 +1,5 @@
 #include "Enemy.h"
 
-void Enemy::initShape()
-{
-	this->shape.setRadius(rand() % 20 + 20);
-	this->shape.setPointCount(rand() % 20 + 3);
-	this->shape.setFillColor(Color(rand() % 255+1, rand() % 255 + 1, rand() % 255+1, 255));
-}
-
 void Enemy::initVariables()
 {
 	this->type			= std::stof(std::to_string(rand() % 4) + "." + std::to_string(rand() % 10));
@@ -23,6 +16,7 @@ void Enemy::initSprite(RenderTarget * target, Texture * texture, float pos_x, fl
 
 	this->sprite.setScale(this->type, this->type);
 
+	//improving position of the sprite if it spawned not entilery in the screen
 	if (pos_x + this->sprite.getGlobalBounds().width >= target->getSize().x) {
 		pos_x = pos_x - this->sprite.getGlobalBounds().width;
 	}
