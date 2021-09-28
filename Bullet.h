@@ -7,6 +7,10 @@ class Bullet
 	Sprite bulletSprite;
 	Vector2f direction;
 
+	/*Game logic atributes
+	*	- movementSpeed		- number of frames the bullet moves every frame
+	*	- recoil			- number of frames the target that was hit by bullet moves in the opposite direction
+	*/
 	float movementSpeed;
 	float recoil;
 
@@ -27,6 +31,7 @@ public:
 	const FloatRect getBounds() const;
 	const float getRecoil()const;
 
+	//Update / Render
 	void update();
 	void render(RenderTarget* target);
 };

@@ -186,7 +186,7 @@ void Game::update()
 	this->updateInput();
 
 	//update points and health bar
-	this->updateGUI();
+	this->updateTexts();
 	
 	//update player
 	this->player->update();
@@ -271,7 +271,7 @@ void Game::updateBullets()
 	}
 }
 
-void Game::updateGUI()
+void Game::updateTexts()
 {
 	if (gameOver)
 	{

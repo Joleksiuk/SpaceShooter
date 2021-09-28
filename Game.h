@@ -76,16 +76,18 @@ public:
 	//******UPDATE*******
 	void update();
 
+
 	void updatePollEvents();
 	void updateInput();
 	void updateSpawnEnemies();
 	void updateEnemiesAndCombat();
 	void updateBullets();
-	void updateGUI();
+	void updateTexts();
 	void updateBackground();
 
 	//******RENDER*******
 	void render();
+
 
 	void renderGUI();
 	void renderBackground();
