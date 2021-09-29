@@ -1,21 +1,39 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 class HealthBar
 {
-	sf::Sprite sprite;
-	sf::RectangleShape shape;
+	//***************** ATRIBUTES *******************
+	//Vector contains sprites of png hearts
+	std::vector<sf::Sprite*> heartSprites;
 
-	void initSprite(sf::Texture* texture, float pox_x, float pos_y);
-	void initShape(float pox_x, float pos_y);
+	//Coordinates where healthbar will spawn
+	float xPosition;
+	float yPosition;
+	float spaceBetween;
 
+	//Variable of initial number of lives
+	int numberOfLivesMax;
+	//Variable of current number of lives
+	int numberOfLives;
+
+	//***************** FUNCTIONS *******************
+	void initSprites(sf::Texture* texture);
+	void initVariables(int number_of_lives_max, float pos_x, float pos_y);
 
 public:
 
-	float hp;
-
+	//Constructor / Destructor
 	HealthBar(sf::Texture* texture, float pox_x, float pos_y, int hp);
 	virtual ~HealthBar();
 
+	//Accessors
+	const float& getHp()const;
+
+	//Game logic
+	void subtractHp();
+
+	//Update / Render
 	void update();
 	void render(sf::RenderTarget& target);
 };

@@ -24,6 +24,9 @@ void Game::initTextures()
 	this->textures["HEALTHBAR"] = new Texture();
 	this->textures["HEALTHBAR"]->loadFromFile("Textures/healthBar.png");
 
+	this->textures["HEART"] = new Texture();
+	this->textures["HEART"]->loadFromFile("Textures/heart.png");
+
 	this->textures["BACKGROUND"] = new Texture();
 	this->textures["BACKGROUND"]->loadFromFile("Textures/space.png");
 
@@ -77,7 +80,7 @@ void Game::initFontsAndTexts()
 
 void Game::initHealthBar()
 {
-	this->healthBar = new HealthBar(this->textures["HEALTHBAR"], 10.0, 10.0, this->player->getHp());
+	this->healthBar = new HealthBar(this->textures["HEART"], 20.f, 20.f, this->player->getHp());
 }
 
 Game::Game()
@@ -234,21 +237,30 @@ void Game::updateEnemiesAndCombat()
 				}
 			}
 		}
-		//check collision with window
+		// check collision with the player ship
+		if (this->player->getBounds().intersects(this->enemies[i]->getBounds())) {
+
+			this->healthBar->subtractHp();
+			this->enemies.erase(this->enemies.begin() + i);
+			enemy_removed = true;
+		}
+	
+
+		//check collision with window if enemy hasn't beeen removed
 		if (!enemy_removed) 
 		{
 			//Remove enemies at the bottom of the screen
 			if (this->enemies[i]->getBounds().top > this->window->getSize().y)
 			{
 				enemy_removed = true;
-				this->healthBar->hp -= enemies[i]->getDamage();
+				this->healthBar->subtractHp();
 				this->enemies.erase(this->enemies.begin() + i);
 
-				//if hp<=0 game ends;
-				if (healthBar->hp <= 0) 
-				{
-					this->gameOver = true;
-				}
+				//TODO :: check end game condition
+				//if () 
+				//{
+				//	this->gameOver = true;
+				//}
 			}
 		}
 	}

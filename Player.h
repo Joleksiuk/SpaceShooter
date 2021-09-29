@@ -31,14 +31,19 @@ public:
 	Player();
 	virtual ~Player();
 
+	//Accessors
+	const FloatRect& getBounds() const;
 	const Vector2f& getPosition() const;
-	void move(RenderTarget& target, const float dirX, const float dirY );
-	const bool canAttack();
 	const int & getAttackPower() const;
 	const int & getPoints() const;
-
-	int getHp();
+	const int & getHp() const;
+	
+	//Game logic
+	void move(RenderTarget& target, const float dirX, const float dirY);
+	const bool canAttack();
 	void addPoints(int points);
+
+	//Update / render
 	void update();
 	void updateAttack();
 	void render(RenderTarget& target);

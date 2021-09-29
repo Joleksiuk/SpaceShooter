@@ -22,7 +22,7 @@ void Player::initSprite()
 void Player::initVariables()
 {
 	this->movementSpeed = 5.f;
-	this->hp = 100;
+	this->hp = 5;
 	this->points = 0;
 	this->attackPower = 2;
 	this->attackCooldownMax = 10.f;
@@ -39,6 +39,11 @@ Player::Player()
 
 Player::~Player()
 {
+}
+
+const FloatRect& Player::getBounds() const
+{
+	return this->sprite.getGlobalBounds();
 }
 
 const Vector2f & Player::getPosition() const
@@ -97,7 +102,7 @@ const int & Player::getPoints() const
 	return this->points;
 }
 
-int Player::getHp()
+const int& Player::getHp() const
 {
 	return this->hp;
 }

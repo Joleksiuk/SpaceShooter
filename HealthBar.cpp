@@ -1,40 +1,63 @@
 #include "HealthBar.h"
 
-void HealthBar::initSprite(sf::Texture* texture, float pox_x, float pos_y)
+void HealthBar::initSprites(sf::Texture* texture)
 {
-	this->sprite.setTexture(*texture);
-	this->sprite.setPosition(pox_x, pos_y);
-	this->sprite.scale(0.3f, 0.3f);
+	for (int i = 0; i < this->numberOfLivesMax; i++) {
+		this->heartSprites.push_back(new sf::Sprite());
+		this->heartSprites[i]->setTexture(*texture);
+		this->heartSprites[i]->setPosition(this->xPosition, this->yPosition);
+		this->heartSprites[i]->setScale(0.12f, 0.12f);
+
+		this->xPosition += this->heartSprites[i]->getGlobalBounds().width + this->spaceBetween;
+	}
 }
 
-void HealthBar::initShape(float pox_x, float pos_y)
+void HealthBar::initVariables(int number_of_lives_max, float pos_x, float pos_y)
 {
-	this->shape.setSize(sf::Vector2f(this->hp, sprite.getGlobalBounds().height-20));
-	this->shape.setPosition(pox_x+45, pos_y+10);
-	this->shape.setFillColor(sf::Color::Green);
+	this->xPosition = pos_x;
+	this->yPosition = pos_y;
+	this->spaceBetween = 10.f;
+	this->numberOfLivesMax = number_of_lives_max;
+	this->numberOfLives = this->numberOfLivesMax;
 }
 
-HealthBar::HealthBar(sf::Texture* texture, float pos_x, float pos_y, int hp)
+HealthBar::HealthBar(sf::Texture* texture, float pos_x, float pos_y, int number_of_lives_max)
 {
-	this->hp = hp;
-	this->initSprite(texture,pos_x,pos_y);
-	this->initShape(pos_x,pos_y);
+	this->initVariables(number_of_lives_max, pos_x, pos_y);
+	this->initSprites(texture);
 }
 
 HealthBar::~HealthBar()
 {
+	for (auto* heart : this->heartSprites) {
+		delete heart;
+	}
+}
+
+const float& HealthBar::getHp() const
+{
+	return this->numberOfLives;
+}
+
+void HealthBar::subtractHp()
+{
+	if (this->numberOfLives > 0) {
+		this->numberOfLives -= 1;
+	}
 }
 
 void HealthBar::update()
 {
-	if (this->hp > 0) 
-	{
-		shape.setSize(sf::Vector2f(this->hp, sprite.getGlobalBounds().height - 20));
+	int i = this->heartSprites.size()-1;
+	while (this->heartSprites.size() != numberOfLives) {
+		this->heartSprites.erase(heartSprites.begin() + i);
+		i++;
 	}
 }
 
 void HealthBar::render(sf::RenderTarget& target)
 {
-	target.draw(shape);
-	target.draw(sprite);
+	for (auto* heart : this->heartSprites) {
+		target.draw(*heart);
+	}
 }
