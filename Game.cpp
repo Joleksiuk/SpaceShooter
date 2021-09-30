@@ -58,17 +58,12 @@ void Game::initEnemies()
 void Game::initFontsAndTexts()
 {
 	//loading font
-	if (this->pointsFont.loadFromFile("Fonts/font.ttf")) {
+	if (!this->pointsFont.loadFromFile("Fonts/font.ttf")) {
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
-	if (this->gameOverFont.loadFromFile("Fonts/font.ttf")) {
+	if (!this->gameOverFont.loadFromFile("Fonts/font.ttf")) {
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
-	//init game over text
-	this->gameOverText.setFont(this->pointsFont);
-	this->gameOverText.setCharacterSize(40);
-	this->gameOverText.setPosition(300,300);
-	this->gameOverText.setFillColor(Color::Red);
 
 	//init point text
 	this->pointText.setFont(this->pointsFont);
@@ -76,7 +71,32 @@ void Game::initFontsAndTexts()
 	this->pointText.setPosition(600, 30);
 	this->pointText.setFillColor(Color::White);
 	this->pointText.setString("Points : ");
+
+	this->gameOverText.setFont(this->gameOverFont);
+	this->gameOverText.setCharacterSize(40);
+	this->gameOverText.setPosition(
+		this->window->getSize().x/2.0,
+		this->window->getSize().y/2.0);
+
+	this->gameOverText.setFillColor(Color::Red);
 }
+
+void Game::updateTexts()
+{
+	if (this->gameOver)
+	{
+		this->gameOverText.setString("GAME OVER");
+		this->gameOverText.setPosition(
+			static_cast<double>((static_cast<double>(this->window->getSize().x) - static_cast<double>(this->gameOverText.getGlobalBounds().width ))) / 2.0,
+			static_cast<double>((static_cast<double>(this->window->getSize().y) - static_cast<double>(this->gameOverText.getGlobalBounds().height))) / 2.0
+		);
+	}
+	else
+	{
+		this->pointText.setString("Points : " + std::to_string(this->player->getPoints()));
+	}
+}
+
 
 void Game::initHealthBar()
 {
@@ -179,30 +199,39 @@ void Game::updateInput()
 
 void Game::update()
 {
+	if (!gameOver) {
 
-	this->updateBackground();
-	//Update Action listener
+		this->updateBackground();
 
-	this->updatePollEvents();
+		//Update Action listener
+		this->updatePollEvents();
 
-	//move player
-	this->updateInput();
+		//move player
+		this->updateInput();
 
-	//update points and health bar
-	this->updateTexts();
-	
-	//update player
-	this->player->update();
+		//update points
+		this->updateTexts();
 
-	//update Health Bar
-	this->healthBar->update();
+		//update player
+		this->player->update();
 
-	//update bullets
-	this->updateBullets();
+		//update bullets
+		this->updateBullets();
 
-	//update Enemies
-	this->updateSpawnEnemies();
-	this->updateEnemiesAndCombat();
+		//update Enemies
+		this->updateSpawnEnemies();
+		this->updateEnemiesAndCombat();
+
+		//update Health Bar
+		this->healthBar->update();
+	}
+	else {
+
+		this->updateTexts();
+		this->updatePollEvents();
+		this->healthBar->update();
+		
+	}
 }
 
 void Game::updateEnemiesAndCombat()
@@ -238,14 +267,16 @@ void Game::updateEnemiesAndCombat()
 			}
 		}
 		// check collision with the player ship
-		if (this->player->getBounds().intersects(this->enemies[i]->getBounds())) {
+		if (!enemy_removed)
+		{
+			if (this->player->getBounds().intersects(this->enemies[i]->getBounds())) {
 
-			this->healthBar->subtractHp();
-			this->enemies.erase(this->enemies.begin() + i);
-			enemy_removed = true;
+				this->healthBar->subtractHp();
+				this->enemies.erase(this->enemies.begin() + i);
+				enemy_removed = true;
+			}
 		}
 	
-
 		//check collision with window if enemy hasn't beeen removed
 		if (!enemy_removed) 
 		{
@@ -254,14 +285,14 @@ void Game::updateEnemiesAndCombat()
 			{
 				enemy_removed = true;
 				this->healthBar->subtractHp();
-				this->enemies.erase(this->enemies.begin() + i);
-
-				//TODO :: check end game condition
-				//if () 
-				//{
-				//	this->gameOver = true;
-				//}
+				this->enemies.erase(this->enemies.begin() + i);	
 			}
+		}
+
+		//check end game condition
+		if (this->healthBar->getHp() <= 0)
+		{
+			this->gameOver = true;
 		}
 	}
 }
@@ -283,18 +314,6 @@ void Game::updateBullets()
 	}
 }
 
-void Game::updateTexts()
-{
-	if (gameOver)
-	{
-		this->gameOverText.setString("GAME OVER");
-	}
-	else
-	{
-		this->pointText.setString("Points : " + std::to_string(this->player->getPoints()));
-	}
-}
-
 void Game::updateBackground()
 {
 	this->background.move(0.f, 2.f);
@@ -312,8 +331,6 @@ void Game::render()
 	this->renderBackground();
 
 	this->player->render(*this->window);
-
-	
 
 	for (auto *bullet : this->bullets) {
 		bullet->render(this->window);
@@ -333,6 +350,7 @@ void Game::render()
 void Game::renderGUI()
 {
 	this->window->draw(this->pointText);
+	this->window->draw(this->gameOverText);
 }
 
 void Game::renderBackground()

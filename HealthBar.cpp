@@ -51,7 +51,7 @@ void HealthBar::update()
 	int i = this->heartSprites.size()-1;
 	while (this->heartSprites.size() != numberOfLives) {
 		this->heartSprites.erase(heartSprites.begin() + i);
-		i++;
+		i--;
 	}
 }
 
