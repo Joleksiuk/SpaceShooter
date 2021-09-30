@@ -238,13 +238,14 @@ void Game::updateEnemiesAndCombat()
 			}
 		}
 		// check collision with the player ship
-		if (this->player->getBounds().intersects(this->enemies[i]->getBounds())) {
+		if (!enemy_removed) {
+			if (this->player->getBounds().intersects(this->enemies[i]->getBounds())) {
 
-			this->healthBar->subtractHp();
-			this->enemies.erase(this->enemies.begin() + i);
-			enemy_removed = true;
+				this->healthBar->subtractHp();
+				this->enemies.erase(this->enemies.begin() + i);
+				enemy_removed = true;
+			}
 		}
-	
 
 		//check collision with window if enemy hasn't beeen removed
 		if (!enemy_removed) 
