@@ -65,6 +65,10 @@ void Game::initFontsAndTexts()
 		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
 	}
 
+	if (!this->pressRtoRestartFont.loadFromFile("Fonts/font.ttf")) {
+		std::cout << "ERROR :: GAME :: INITGUI :: Cannot load font";
+	}
+
 	//init point text
 	this->pointText.setFont(this->pointsFont);
 	this->pointText.setCharacterSize(24);
@@ -72,23 +76,38 @@ void Game::initFontsAndTexts()
 	this->pointText.setFillColor(Color::White);
 	this->pointText.setString("Points : ");
 
+	//init gameOver text
 	this->gameOverText.setFont(this->gameOverFont);
 	this->gameOverText.setCharacterSize(40);
 	this->gameOverText.setPosition(
 		this->window->getSize().x/2.0,
 		this->window->getSize().y/2.0);
-
 	this->gameOverText.setFillColor(Color::Red);
+	this->gameOverText.setString("Game Over");
+
+	//init press r to restart text
+	this->pressRtoRestartText.setFont(this->gameOverFont);
+	this->pressRtoRestartText.setCharacterSize(20);
+	this->pressRtoRestartText.setPosition(
+		this->window->getSize().x / 2.0,
+		this->window->getSize().y / 2.0);
+	this->pressRtoRestartText.setFillColor(Color::Red);
+	this->pressRtoRestartText.setString("Press R to restart!");
+
 }
 
 void Game::updateTexts()
 {
 	if (this->gameOver)
 	{
-		this->gameOverText.setString("GAME OVER");
 		this->gameOverText.setPosition(
 			static_cast<double>((static_cast<double>(this->window->getSize().x) - static_cast<double>(this->gameOverText.getGlobalBounds().width ))) / 2.0,
 			static_cast<double>((static_cast<double>(this->window->getSize().y) - static_cast<double>(this->gameOverText.getGlobalBounds().height))) / 2.0
+		);
+
+		this->pressRtoRestartText.setPosition(
+			static_cast<double>((static_cast<double>(this->window->getSize().x) - static_cast<double>(this->pressRtoRestartText.getGlobalBounds().width))) / 2.0,
+			static_cast<double>((static_cast<double>(this->window->getSize().y+80.0) - static_cast<double>(this->pressRtoRestartText.getGlobalBounds().height))) / 2.0
 		);
 	}
 	else
@@ -97,15 +116,24 @@ void Game::updateTexts()
 	}
 }
 
-
 void Game::initHealthBar()
 {
 	this->healthBar = new HealthBar(this->textures["HEART"], 20.f, 20.f, this->player->getHp());
 }
 
+void Game::initNewGame()
+{
+	this->clearTheGame();
+	this->initPlayer();
+	this->initHealthBar();
+	this->initEnemies();
+}
+
 Game::Game()
 {
+	this->restartGame = false;
 	this->gameOver = false;
+
 	this->initWindow();
 	this->initFontsAndTexts();
 	this->initTextures();
@@ -195,6 +223,8 @@ void Game::updateInput()
 				this->player->getPosition().y-32, 0.f, -1.f, 5.f));
 	}
 
+	
+
 }
 
 void Game::update()
@@ -226,11 +256,22 @@ void Game::update()
 		this->healthBar->update();
 	}
 	else {
+		//restarting the game
+		if (Keyboard::isKeyPressed(Keyboard::Key::R))
+		{
+			this->restartGame = true;
+		}
 
 		this->updateTexts();
 		this->updatePollEvents();
 		this->healthBar->update();
-		
+
+		if (this->restartGame == true)
+		{
+			this->gameOver = false;
+			this->restartGame = false;
+			this->initNewGame(); 
+		}
 	}
 }
 
@@ -324,6 +365,14 @@ void Game::updateBackground()
 
 }
 
+void Game::clearTheGame()
+{
+	this->bullets.clear();
+	this->enemies.clear();
+	delete player;
+	delete healthBar;	
+}
+
 void Game::render()
 {
 	this->window->clear();
@@ -349,8 +398,13 @@ void Game::render()
 
 void Game::renderGUI()
 {
+	
 	this->window->draw(this->pointText);
-	this->window->draw(this->gameOverText);
+	if (this->gameOver)
+	{
+		this->window->draw(this->gameOverText);
+		this->window->draw(this->pressRtoRestartText);
+	}
 }
 
 void Game::renderBackground()

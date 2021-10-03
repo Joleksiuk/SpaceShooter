@@ -28,7 +28,7 @@ public:
 	virtual ~HealthBar();
 
 	//Accessors
-	const float& getHp()const;
+	const int& getHp()const;
 
 	//Game logic
 	void subtractHp();

@@ -34,7 +34,7 @@ HealthBar::~HealthBar()
 	}
 }
 
-const float& HealthBar::getHp() const
+const int& HealthBar::getHp() const
 {
 	return this->numberOfLives;
 }
