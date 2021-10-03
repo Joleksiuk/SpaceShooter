@@ -23,7 +23,9 @@ private:
 	RenderWindow* window;
 	VideoMode videoMode;
 	
+	//managing the state of game
 	bool gameOver;
+	bool restartGame;
 
 	//Player;
 	Player* player;
@@ -42,10 +44,12 @@ private:
 	//Fonts
 	Font pointsFont;
 	Font gameOverFont;
+	Font pressRtoRestartFont;
 
 	//Texts
 	Text pointText;
 	Text gameOverText;
+	Text pressRtoRestartText;
 	
 	//Resources
 	std::map<std::string,sf::Texture*> textures;
@@ -58,7 +62,6 @@ private:
 	//Resolution modifier
 	float resolutionModifier;
 
-
 	//initializing functions
 	void initWindow();
 	void initBackground();
@@ -67,6 +70,7 @@ private:
 	void initEnemies();
 	void initFontsAndTexts();
 	void initHealthBar();
+	void initNewGame();
 
 public:
 	//Constructor / Destructor
@@ -80,7 +84,6 @@ public:
 	//******UPDATE*******
 	void update();
 
-
 	void updatePollEvents();
 	void updateInput();
 	void updateSpawnEnemies();
@@ -88,10 +91,10 @@ public:
 	void updateBullets();
 	void updateTexts();
 	void updateBackground();
+	void clearTheGame();
 
 	//******RENDER*******
 	void render();
-
 
 	void renderGUI();
 	void renderBackground();

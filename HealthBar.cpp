@@ -34,7 +34,7 @@ HealthBar::~HealthBar()
 	}
 }
 
-const float& HealthBar::getHp() const
+const int& HealthBar::getHp() const
 {
 	return this->numberOfLives;
 }
@@ -51,7 +51,7 @@ void HealthBar::update()
 	int i = this->heartSprites.size()-1;
 	while (this->heartSprites.size() != numberOfLives) {
 		this->heartSprites.erase(heartSprites.begin() + i);
-		i++;
+		i--;
 	}
 }
 
