@@ -6,7 +6,7 @@ void HealthBar::initSprites(sf::Texture* texture)
 		this->heartSprites.push_back(new sf::Sprite());
 		this->heartSprites[i]->setTexture(*texture);
 		this->heartSprites[i]->setPosition(this->xPosition, this->yPosition);
-		this->heartSprites[i]->setScale(0.12f, 0.12f);
+		this->heartSprites[i]->setScale(0.12f * (sf::VideoMode::getDesktopMode().height / 1000.f), 0.12f * (sf::VideoMode::getDesktopMode().height / 1000.f));
 
 		this->xPosition += this->heartSprites[i]->getGlobalBounds().width + this->spaceBetween;
 	}

@@ -10,11 +10,11 @@ void Enemy::initVariables()
 	this->damage		= this->points;
 }
 
-void Enemy::initSprite(RenderTarget * target, Texture * texture, float pos_x, float pos_y)
+void Enemy::initSprite(RenderTarget * target, Texture * texture, float pos_x, float pos_y, float &resolutionModifier)
 {
 	this->sprite.setTexture(*texture);
 
-	this->sprite.setScale(this->type, this->type);
+	this->sprite.setScale(this->type * resolutionModifier, this->type * resolutionModifier);
 
 	//improving position of the sprite if it spawned not entilery in the screen
 	if (pos_x + this->sprite.getGlobalBounds().width >= target->getSize().x) {
@@ -25,10 +25,10 @@ void Enemy::initSprite(RenderTarget * target, Texture * texture, float pos_x, fl
 
 }
 
-Enemy::Enemy(RenderTarget * target, Texture* texture, float pos_x, float pos_y)
+Enemy::Enemy(RenderTarget * target, Texture* texture, float pos_x, float pos_y, float &resolutionModifier)
 {	
 	this->initVariables();
-	this->initSprite(target, texture, pos_x, pos_y);
+	this->initSprite(target, texture, pos_x, pos_y, resolutionModifier);
 
 }
 

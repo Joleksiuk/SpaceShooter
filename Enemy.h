@@ -25,11 +25,11 @@ private:
 	int damage;
 	
 	void initVariables();
-	void initSprite(RenderTarget * target, Texture* texture, float pos_x, float pos_y);
+	void initSprite(RenderTarget * target, Texture* texture, float pos_x, float pos_y,float &resolutionModifier);
 
 public:
 	//Constructor / Destructor
-	Enemy(RenderTarget * target, Texture* texture, float pos_x, float pos_y);
+	Enemy(RenderTarget * target, Texture* texture, float pos_x, float pos_y, float& resolutionModifier);
 	virtual ~Enemy();
 	
 	//Accessors to private atributes

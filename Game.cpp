@@ -1,18 +1,31 @@
 #include "Game.h"
+#include <iostream>
 
 void Game::initWindow()
 {
-	this->videoMode.height = 800;
-	this->videoMode.width = 800;
+	
+	this->resolutionModifier = sf::VideoMode::getDesktopMode().height / 800.f; //resolution modifier that you can multiply by to get right size of sprite relativly to screen resolution
+	this->videoMode.height = 800 * this->resolutionModifier -76;
+	this->videoMode.width = 600 * this->resolutionModifier -76*3/4;
 	this->window = new RenderWindow(this->videoMode,"Game 3", Style::Close | Style::Titlebar);
 	this->window->setFramerateLimit(144);
 	this->window->setVerticalSyncEnabled(false);
+	int center_x = (sf::VideoMode::getDesktopMode().width / 2) - (this->window->getSize().x / 2);
+	int center_y = (sf::VideoMode::getDesktopMode().height / 2) - (this->window->getSize().y / 2)-36;
+	this->window->setPosition( Vector2i(center_x,center_y));
+	
 }
 
 void Game::initBackground()
 {
-	this->background.setTexture(*this->textures["BACKGROUND"]);
-	background.setPosition(0.f, -background.getGlobalBounds().height + this->window->getSize().y);
+	this->background_1.setTexture(*this->textures["BACKGROUND"]);
+	this->background_1.setScale(sf::Vector2f(this->resolutionModifier, this->resolutionModifier));
+	this->background_2.setTexture(*this->textures["BACKGROUND"]);
+	this->background_2.setScale(sf::Vector2f(this->resolutionModifier, this->resolutionModifier));
+
+	background_1.setPosition(0.f, -background_1.getGlobalBounds().height + this->window->getSize().y);
+	background_2.setPosition(0.f, -background_1.getGlobalBounds().height + this->window->getSize().y - background_2.getGlobalBounds().height);
+	
 }
 
 void Game::initTextures()
@@ -46,7 +59,7 @@ void Game::initTextures()
 
 void Game::initPlayer()
 {
-	this->player = new Player();
+	this->player = new Player(this->resolutionModifier);
 }
 
 void Game::initEnemies()
@@ -126,7 +139,7 @@ void Game::updateSpawnEnemies()
 	this->spawnTimer += 0.5f;
 	if (this->spawnTimer >= this->spawnTimerMax)
 	{
-		this->enemies.push_back(new Enemy(this->window, shipTextures[rand() % 3], rand() % this->window->getSize().x - 20.f, -100.f));
+		this->enemies.push_back(new Enemy(this->window, shipTextures[rand() % 3], rand() % this->window->getSize().x - 20.f, -100.f,this->resolutionModifier));
 		this->spawnTimer = 0.f;
 	}
 }
@@ -160,19 +173,19 @@ void Game::updateInput()
 	if (Keyboard::isKeyPressed(Keyboard::Key::A) || Keyboard::isKeyPressed(Keyboard::Key::Left))
 		this->player->move(*this->window,-1.f, 0.f);
 	else if (Keyboard::isKeyPressed(Keyboard::Key::D) || Keyboard::isKeyPressed(Keyboard::Key::Right))
-		this->player->move(*this->window,1.f, 0.f);
+		this->player->move(*this->window,1.f , 0.f);
 	if (Keyboard::isKeyPressed(Keyboard::Key::W) || Keyboard::isKeyPressed(Keyboard::Key::Up))
-		this->player->move(*this->window,0.f, -1.f);
+		this->player->move(*this->window,0.f, -1.f );
 	else if (Keyboard::isKeyPressed(Keyboard::Key::S) || Keyboard::isKeyPressed(Keyboard::Key::Down))
-		this->player->move(*this->window,0.f, 1.f);
+		this->player->move(*this->window,0.f, 1.f );
 
 	//Shooting
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && this->player->canAttack() )
 	{
 		this->bullets.push_back( new Bullet(
 				this->textures["BULLET"],
-				this->player->getPosition().x+28,
-				this->player->getPosition().y-32, 0.f, -1.f, 5.f));
+				this->player->getPosition().x+28 * this->resolutionModifier,
+				this->player->getPosition().y-32 * this->resolutionModifier, 0.f, -1.f, 5.f * this->resolutionModifier));
 	}
 
 }
@@ -298,10 +311,14 @@ void Game::updateTexts()
 
 void Game::updateBackground()
 {
-	this->background.move(0.f, 2.f);
+	this->background_1.move(0.f, 2.f);
+	this->background_2.move(0.f, 2.f);
 
-	if (background.getGlobalBounds().top == 0) {
-		background.setPosition(0.f, -background.getGlobalBounds().height + this->window->getSize().y);
+	if (background_1.getGlobalBounds().top >= this->window->getSize().y) {
+		background_1.setPosition(0.f, -background_1.getGlobalBounds().height + this->window->getSize().y -background_2.getGlobalBounds().height);
+	}
+	if (background_2.getGlobalBounds().top >= this->window->getSize().y) {
+		background_2.setPosition(0.f, -background_2.getGlobalBounds().height + this->window->getSize().y - background_1.getGlobalBounds().height);
 	}
 
 }
@@ -338,5 +355,6 @@ void Game::renderGUI()
 
 void Game::renderBackground()
 {
-	this->window->draw(background);
+	this->window->draw(background_1); 
+	this->window->draw(background_2);
 }

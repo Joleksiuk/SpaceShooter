@@ -4,7 +4,7 @@ Bullet::Bullet(Texture* texture, float pos_x, float pos_y, float dir_x, float di
 {
 	this->bulletSprite.setTexture(*texture);
 	this->bulletSprite.setPosition(pos_x, pos_y);
-	this->bulletSprite.scale(0.2f,0.2f);
+	this->bulletSprite.scale(0.2f * (sf::VideoMode::getDesktopMode().height / 1000.f),0.2f * (sf::VideoMode::getDesktopMode().height / 1000.f));
 	this->direction.x = dir_x;
 	this->direction.y = dir_y;
 	this->movementSpeed = movement_speed;

@@ -24,11 +24,11 @@ private:
 
 	//private functions
 	void initTexture();
-	void initSprite();
+	void initSprite(float &resolutionModifier);
 	void initVariables();
 	
 public:
-	Player();
+	Player(float &resolutionModifier);
 	virtual ~Player();
 
 	//Accessors

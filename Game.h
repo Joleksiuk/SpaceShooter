@@ -52,7 +52,11 @@ private:
 	std::vector<Texture*> shipTextures;
 
 	//Graphics
-	Sprite background;
+	Sprite background_1;
+	Sprite background_2;
+
+	//Resolution modifier
+	float resolutionModifier;
 
 
 	//initializing functions

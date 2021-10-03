@@ -9,13 +9,13 @@ void Player::initTexture()
 	};
 }
 
-void Player::initSprite()
+void Player::initSprite(float &resolutionModifier)
 {
 	//set the texture to the sprite
 	this->sprite.setTexture(this->texture);
 
 	//Resize the sprite
-	this->sprite.scale(0.15f, 0.15f);
+	this->sprite.scale((0.15f* resolutionModifier), 0.15f * resolutionModifier);
 
 }
 
@@ -29,11 +29,11 @@ void Player::initVariables()
 	this->attackCooldown = this->attackCooldownMax;
 }
 
-Player::Player()
+Player::Player(float &resolutionModifier)
 {
 	this->movementSpeed = 3.f;
 	this->initTexture();
-	this->initSprite();	
+	this->initSprite(resolutionModifier);
 	this->initVariables();
 }
 
