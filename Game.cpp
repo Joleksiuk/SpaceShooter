@@ -189,7 +189,7 @@ void Game::updateSpawnEnemies()
 	this->spawnTimer += 0.5f;
 	if (this->spawnTimer >= this->spawnTimerMax)
 	{
-		this->enemies.push_back(new Enemy(this->window, shipTextures[rand() % 3], rand() % this->window->getSize().x - 20.f, -100.f,this->resolutionModifier));
+		this->enemies.push_back(new Enemy(this->window, shipTextures[rand() % 3], rand() % this->window->getSize().x, -100.f,this->resolutionModifier));
 		this->spawnTimer = 0.f;
 	}
 }
@@ -203,7 +203,6 @@ const bool Game::gameIsPaused() const
 {
 	return this->pausePhase;
 }
-
 
 void Game::updateInput()
 {
@@ -306,6 +305,7 @@ void Game::updateEnemiesAndCombat()
 			if (this->player->getBounds().intersects(this->enemies[i]->getBounds())) {
 
 				this->healthBar->subtractHp();
+				std::cout << "PLAYER hit an enemy" << healthBar->getHp() << std::endl;
 				this->enemies.erase(this->enemies.begin() + i);
 				enemy_removed = true;
 			}
@@ -317,9 +317,10 @@ void Game::updateEnemiesAndCombat()
 			//Remove enemies at the bottom of the screen
 			if (this->enemies[i]->getBounds().top > this->window->getSize().y)
 			{
-				enemy_removed = true;
+				std::cout << "ENEMY hit the screen" << healthBar->getHp() << std::endl;
 				this->healthBar->subtractHp();
 				this->enemies.erase(this->enemies.begin() + i);	
+				enemy_removed = true;
 			}
 		}
 
