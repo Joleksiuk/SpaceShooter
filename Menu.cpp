@@ -51,7 +51,7 @@ Menu::Menu(RenderWindow* window)
 
 	this->chosenOption = 0;
 
-	this->buttonPressingTimerMax = 13;
+	this->buttonPressingTimerMax = 10;
 	this->buttonPressingTimer = this->buttonPressingTimerMax;
 
 	this->window = window;
@@ -61,7 +61,10 @@ Menu::Menu(RenderWindow* window)
 
 Menu::~Menu()
 {
-
+	for (auto* text : menuOptions)
+	{
+		delete text;
+	}
 }
 
 void Menu::run()
@@ -89,16 +92,17 @@ void Menu::update()
 
 void Menu::updateUserInput()
 {
-	//Moving on the menu
+	
 	this->buttonPressingTimer+=1.f;
 
 	if (this->buttonPressingTimer >= this->buttonPressingTimerMax)
 	{
 		this->buttonPressingTimer = 0.f;
+
+		//Moving on the menu
 		if (Keyboard::isKeyPressed(Keyboard::Key::S) || Keyboard::isKeyPressed(Keyboard::Key::Down))
 		{
 			this->chosenOption++;
-			std::cout << this->chosenOption << std::endl;
 			if (this->chosenOption >= this->menuOptions.size())
 			{
 				this->chosenOption = 0;
@@ -116,8 +120,30 @@ void Menu::updateUserInput()
 				this->chosenOption--;	
 			}
 		}
+		//choosing an option
+		if (Keyboard::isKeyPressed(Keyboard::Key::Enter))
+		{
+			int test = -1;
+			switch (this->chosenOption)
+			{
+			case 0:
+				test = 0;
+				break;
+			case 1:
+				test = 1;
+				break;
+			case 2:
+				test = 2;
+				break;
+			case 3:
+				test = 3;
+				break;
+			default:
+				break;
+			}
+			std::cout << "Chosen option: " <<test<< std::endl;
+		}
 	}
-
 }
 
 void Menu::updateTexts()
@@ -147,7 +173,6 @@ void Menu::updateBackground()
 
 void Menu::render()
 {
-
 	this->renderBackground();
 
 	this->renderGUI();

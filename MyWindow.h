@@ -2,6 +2,10 @@
 #include "Game.h"
 #include "Menu.h"
 
+//this class is managing all the "scenes"
+//Main loop is concentrated around MyWindow Class
+//Every "scene" such as menu or game is responsible only for their own compnents 
+
 class MyWindow
 {
 	RenderWindow* window;

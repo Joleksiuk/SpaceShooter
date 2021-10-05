@@ -1,14 +1,6 @@
 #include "Game.h"
 #include <iostream>
 
-void Game::initWindow()
-{
-	this->resolutionModifier = sf::VideoMode::getDesktopMode().height / 800.f; //resolution modifier that you can multiply by to get right size of sprite relativly to screen resolution
-	this->videoMode.height = 800 * this->resolutionModifier -76;
-	this->videoMode.width = 600 * this->resolutionModifier -76*3/4;
-	
-}
-
 void Game::initBackground()
 {
 	this->background_1.setTexture(*this->textures["BACKGROUND"]);
@@ -154,8 +146,8 @@ Game::Game(RenderWindow* window)
 	this->restartGame = false;
 	this->gameOver = false;
 	this->pausePhase = false;
+	this->resolutionModifier = sf::VideoMode::getDesktopMode().height / 800.f; //resolution modifier that you can multiply by to get right size of sprite relativly to screen resolution
 
-	this->initWindow();
 	this->initFontsAndTexts();
 	this->initTextures();
 	this->initBackground();

@@ -71,14 +71,21 @@ const bool MyWindow::running() const
 	
 }
 
+/*in every frame program checks what phase is current
+* Phases:
+*	- Game  ( gamePhase )
+*	- Menu	( menuPhase )
+*/
 void MyWindow::updatePhases()
 {
-	//initial entering menu ( the game is paused but menuPhase wasnt initialized yet)
+	//initial entering menu ( the game is paused but menuPhase wasnt initialized yet - this happens only once every pause)
+	//it needs to be done to achieve the fading effect of menu background ( initializing number of black transparent layers )
 	if (this->game->gameIsPaused() && this->gamePhase == true)
 	{
 		this->menu->initPhase();
 	}
 
+	//checking if the game is paused
 	if (this->game->gameIsPaused()) {
 		this->menuPhase = true;
 		this->gamePhase = false;
@@ -89,6 +96,7 @@ void MyWindow::updatePhases()
 	}
 }
 
+//allowing user to close the window
 void MyWindow::updatePollEvents()
 {
 	Event event;

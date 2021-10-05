@@ -64,7 +64,6 @@ private:
 	float resolutionModifier;
 
 	//initializing functions
-	void initWindow();
 	void initBackground();
 	void initTextures();
 	void initPlayer();
