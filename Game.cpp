@@ -3,16 +3,9 @@
 
 void Game::initWindow()
 {
-	
 	this->resolutionModifier = sf::VideoMode::getDesktopMode().height / 800.f; //resolution modifier that you can multiply by to get right size of sprite relativly to screen resolution
 	this->videoMode.height = 800 * this->resolutionModifier -76;
 	this->videoMode.width = 600 * this->resolutionModifier -76*3/4;
-	this->window = new RenderWindow(this->videoMode,"Game 3", Style::Close | Style::Titlebar);
-	this->window->setFramerateLimit(144);
-	this->window->setVerticalSyncEnabled(false);
-	int center_x = (sf::VideoMode::getDesktopMode().width / 2) - (this->window->getSize().x / 2);
-	int center_y = (sf::VideoMode::getDesktopMode().height / 2) - (this->window->getSize().y / 2)-36;
-	this->window->setPosition( Vector2i(center_x,center_y));
 	
 }
 
@@ -22,6 +15,7 @@ void Game::initBackground()
 	this->background_1.setScale(sf::Vector2f(this->resolutionModifier, this->resolutionModifier));
 	this->background_2.setTexture(*this->textures["BACKGROUND"]);
 	this->background_2.setScale(sf::Vector2f(this->resolutionModifier, this->resolutionModifier));
+	
 
 	background_1.setPosition(0.f, -background_1.getGlobalBounds().height + this->window->getSize().y);
 	background_2.setPosition(0.f, -background_1.getGlobalBounds().height + this->window->getSize().y - background_2.getGlobalBounds().height);
@@ -41,7 +35,9 @@ void Game::initTextures()
 	this->textures["HEART"]->loadFromFile("Textures/heart.png");
 
 	this->textures["BACKGROUND"] = new Texture();
-	this->textures["BACKGROUND"]->loadFromFile("Textures/space.png");
+	if (!this->textures["BACKGROUND"]->loadFromFile("Textures/space.png")) {
+		std::cout << "ERROR:: COULD NOT find the texture :: Textures / space.png " << std::endl;
+	};
 
 	this->shipTextures.push_back (new Texture());
 	this->shipTextures[0]->loadFromFile("Textures/ships/ship1.png");
@@ -85,7 +81,7 @@ void Game::initFontsAndTexts()
 	//init point text
 	this->pointText.setFont(this->pointsFont);
 	this->pointText.setCharacterSize(24);
-	this->pointText.setPosition(600, 30);
+	this->pointText.setPosition(550, 30);
 	this->pointText.setFillColor(Color::White);
 	this->pointText.setString("Points : ");
 
@@ -136,16 +132,28 @@ void Game::initHealthBar()
 
 void Game::initNewGame()
 {
-	this->clearTheGame();
+	this->clearTheOldGame();
 	this->initPlayer();
 	this->initHealthBar();
 	this->initEnemies();
 }
 
-Game::Game()
+void Game::pauseTheGame()
 {
+	this->pausePhase = true;
+}
+
+void Game::unpauseTheGame()
+{
+	this->pausePhase = false;
+}
+
+Game::Game(RenderWindow* window)
+{
+	this->window = window;
 	this->restartGame = false;
 	this->gameOver = false;
+	this->pausePhase = false;
 
 	this->initWindow();
 	this->initFontsAndTexts();
@@ -178,8 +186,10 @@ Game::~Game()
 
 void Game::run ()
 {
-	this->update();
-	this->render();
+	if (!this->pausePhase) {
+		this->update();
+		this->render();
+	}
 }
 
 void Game::updateSpawnEnemies()
@@ -197,23 +207,11 @@ const bool Game::running() const
 	return this->window->isOpen();
 }
 
-void Game::updatePollEvents()
+const bool Game::gameIsPaused() const
 {
-	Event event;
-	while (this->window->pollEvent(event)) {
-		switch (event.type) {
-		case Event::Closed:
-			this->window->close();
-			break;
-
-		case Event::KeyPressed:
-			if (event.key.code == Keyboard::Escape)
-				this->window->close();
-			break;
-
-		}
-	}
+	return this->pausePhase;
 }
+
 
 void Game::updateInput()
 {
@@ -235,49 +233,39 @@ void Game::updateInput()
 				this->player->getPosition().x+28 * this->resolutionModifier,
 				this->player->getPosition().y-32 * this->resolutionModifier, 0.f, -1.f, 5.f * this->resolutionModifier));
 	}
-
-	
-
 }
 
 void Game::update()
 {
+
 	if (!gameOver) {
 
 		this->updateBackground();
 
-		//Update Action listener
-		this->updatePollEvents();
-
 		//move player
 		this->updateInput();
-
 		//update points
 		this->updateTexts();
-
 		//update player
 		this->player->update();
-
 		//update bullets
 		this->updateBullets();
-
 		//update Enemies
 		this->updateSpawnEnemies();
 		this->updateEnemiesAndCombat();
-
 		//update Health Bar
 		this->healthBar->update();
 	}
 	else {
+		
+		this->updateTexts();
+		this->healthBar->update();
+
 		//restarting the game
 		if (Keyboard::isKeyPressed(Keyboard::Key::R))
 		{
 			this->restartGame = true;
 		}
-
-		this->updateTexts();
-		this->updatePollEvents();
-		this->healthBar->update();
 
 		if (this->restartGame == true)
 		{
@@ -382,7 +370,22 @@ void Game::updateBackground()
 
 }
 
-void Game::clearTheGame()
+void Game::updatePauseInput()
+{
+	//Pausing the game
+	if (Keyboard::isKeyPressed(Keyboard::Key::P))
+	{
+		this->pauseTheGame();
+	}
+
+	//Unpasuing the game
+	if (Keyboard::isKeyPressed(Keyboard::Key::U))
+	{
+		this->unpauseTheGame();
+	}
+}
+
+void Game::clearTheOldGame()
 {
 	this->bullets.clear();
 	this->enemies.clear();
@@ -428,4 +431,24 @@ void Game::renderBackground()
 {
 	this->window->draw(background_1); 
 	this->window->draw(background_2);
+}
+
+void Game::renderDuringMenu()
+{
+	this->window->clear();
+
+	this->renderBackground();
+
+	this->player->render(*this->window);
+
+	for (auto* bullet : this->bullets) {
+		bullet->render(this->window);
+	}
+
+	for (auto* enemy : this->enemies) {
+		enemy->render(this->window);
+	}
+	this->healthBar->render(*this->window);
+
+	this->renderGUI();
 }

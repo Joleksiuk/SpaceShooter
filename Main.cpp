@@ -1,17 +1,17 @@
 #include <iostream>
-#include "Game.h"
 #include <time.h>
+#include "MyWindow.h"
 
 
 int main()
 {
 	//Initialize Game engine
-	Game game;
+	MyWindow window;
 	srand((time(0)));
 
-	while (game.running())
+	while (window.running())
 	{
-		game.run();
+		window.run();
 	}
 
 	return 0;

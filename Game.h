@@ -26,6 +26,7 @@ private:
 	//managing the state of game
 	bool gameOver;
 	bool restartGame;
+	bool pausePhase;
 
 	//Player;
 	Player* player;
@@ -70,34 +71,43 @@ private:
 	void initEnemies();
 	void initFontsAndTexts();
 	void initHealthBar();
-	void initNewGame();
 
+	
 public:
 	//Constructor / Destructor
-	Game();
+	Game(RenderWindow* window);
 	virtual ~Game();
+
+	//functions to restart the game
+	void clearTheOldGame();
+	void initNewGame();
+	void pauseTheGame();
+	void unpauseTheGame();
 
 	void run();
 
 	const bool running() const;
+	const bool gameIsPaused() const;
 	
 	//******UPDATE*******
 	void update();
 
-	void updatePollEvents();
+
 	void updateInput();
 	void updateSpawnEnemies();
 	void updateEnemiesAndCombat();
 	void updateBullets();
 	void updateTexts();
 	void updateBackground();
-	void clearTheGame();
+	void updatePauseInput();
+
 
 	//******RENDER*******
 	void render();
 
 	void renderGUI();
 	void renderBackground();
+	void renderDuringMenu();
 
 };
 
