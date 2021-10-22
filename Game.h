@@ -27,6 +27,7 @@ private:
 	bool gameOver;
 	bool restartGame;
 	bool pausePhase;
+	unsigned int timeTicks;
 
 	//Player;
 	Player* player;
@@ -91,7 +92,7 @@ public:
 	//******UPDATE*******
 	void update();
 
-
+	void updateTimer();
 	void updateInput();
 	void updateSpawnEnemies();
 	void updateEnemiesAndCombat();

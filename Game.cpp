@@ -146,6 +146,7 @@ Game::Game(RenderWindow* window)
 	this->restartGame = false;
 	this->gameOver = false;
 	this->pausePhase = false;
+	this->timeTicks = 0;
 	this->resolutionModifier = sf::VideoMode::getDesktopMode().height / 800.f; //resolution modifier that you can multiply by to get right size of sprite relativly to screen resolution
 
 	this->initFontsAndTexts();
@@ -189,7 +190,7 @@ void Game::updateSpawnEnemies()
 	this->spawnTimer += 0.5f;
 	if (this->spawnTimer >= this->spawnTimerMax)
 	{
-		this->enemies.push_back(new Enemy(this->window, shipTextures[rand() % 3], rand() % this->window->getSize().x, -100.f,this->resolutionModifier));
+		this->enemies.push_back(new Enemy(this->window, shipTextures[rand() % 3], rand() % this->window->getSize().x, -100.f,this->resolutionModifier, 1, 1));
 		this->spawnTimer = 0.f;
 	}
 }
@@ -202,6 +203,12 @@ const bool Game::running() const
 const bool Game::gameIsPaused() const
 {
 	return this->pausePhase;
+}
+
+void Game::updateTimer()
+{
+	//timer adding to track timmings
+	this->timeTicks += 1;
 }
 
 void Game::updateInput()
@@ -232,7 +239,8 @@ void Game::update()
 	if (!gameOver) {
 
 		this->updateBackground();
-
+		//game timer update
+		this->updateTimer();
 		//move player
 		this->updateInput();
 		//update points
@@ -322,6 +330,37 @@ void Game::updateEnemiesAndCombat()
 				this->enemies.erase(this->enemies.begin() + i);	
 				enemy_removed = true;
 			}
+		}
+
+		//check pattern and move enemy
+		if (!enemy_removed)
+		{
+			switch (this->enemies[i]->getPattern())
+			{
+			case 0:
+				break;
+			case 1:
+				if (this->enemies[i]->getMovementProgress() <= 50) {
+					this->enemies[i]->changePosition(0, 3.f);
+					
+				}
+				else
+				{
+					this->enemies[i]->changePosition(0, -3.f);
+				}
+				if(this->enemies[i]->getMovementProgress() == 100){
+					this->enemies[i]->changeMovementProgress(-100);
+				}
+				else {
+					this->enemies[i]->changeMovementProgress(1);
+				}
+				break;
+			case 2:
+				break;
+			default:
+				break;
+			}
+
 		}
 
 		//check end game condition
