@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Texture* texture, float pos_x, float pos_y, float dir_x, float dir_y, float movement_speed)
+Bullet::Bullet(Texture* texture, float pos_x, float pos_y, float dir_x, float dir_y, float movement_speed, bool isFriendly)
 {
 	this->bulletSprite.setTexture(*texture);
 	this->bulletSprite.setPosition(pos_x, pos_y);
@@ -9,6 +9,7 @@ Bullet::Bullet(Texture* texture, float pos_x, float pos_y, float dir_x, float di
 	this->direction.y = dir_y;
 	this->movementSpeed = movement_speed;
 	this->recoil = 20;
+	this->isFriendly = isFriendly;
 }
 
 Bullet::~Bullet()
@@ -23,6 +24,11 @@ const FloatRect Bullet::getBounds() const
 const float Bullet::getRecoil() const
 {
 	return this->recoil;
+}
+
+const bool Bullet::getIsFriendly() const
+{
+	return this->isFriendly;
 }
 
 void Bullet::update()

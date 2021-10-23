@@ -22,9 +22,11 @@ void Enemy::initSprite(RenderTarget * target, Texture * texture, float pos_x, fl
 		break;
 	case 1:
 		this->sprite.setScale(1 * resolutionModifier, 1 * resolutionModifier);
+		this->shoot_cooldown = 100;
 		break;
 	case 2:
 		this->sprite.setScale(2 * resolutionModifier, 2 * resolutionModifier);
+		this->shoot_cooldown = 55;
 		break;
 	default:
 		break;
@@ -112,6 +114,11 @@ void Enemy::changeHp(int change)
 	this->hp -= change;
 }
 
+void Enemy::changeShootCooldown(int change)
+{
+	this->shoot_cooldown = change;
+}
+
 void Enemy::moveAttackRecoil(const float& recoil)
 {
 	this->sprite.move(0.f, -recoil);
@@ -131,6 +138,16 @@ const int& Enemy::getPattern() const
 const int& Enemy::getMovementProgress() const
 {
 	return this->move_prog;
+}
+
+const int& Enemy::getShootCooldown() const
+{
+	return this->shoot_cooldown;
+}
+
+const Vector2f& Enemy::getPosition() const
+{
+	return this->sprite.getPosition();
 }
 
 void Enemy::update()

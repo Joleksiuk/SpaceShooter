@@ -20,6 +20,9 @@ void Game::initTextures()
 	this->textures["BULLET"] = new Texture();
 	this->textures["BULLET"]->loadFromFile("Textures/bullets/16.png");
 
+	this->textures["BULLET_ENEMY"] = new Texture();
+	this->textures["BULLET_ENEMY"]->loadFromFile("Textures/bullets/enemyProjectile1.png");
+
 	this->textures["HEALTHBAR"] = new Texture();
 	this->textures["HEALTHBAR"]->loadFromFile("Textures/healthBar.png");
 
@@ -226,10 +229,10 @@ void Game::updateInput()
 	//Shooting
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && this->player->canAttack() )
 	{
-		this->bullets.push_back( new Bullet(
+		this->bullets.push_back(new Bullet(
 				this->textures["BULLET"],
 				this->player->getPosition().x+28 * this->resolutionModifier,
-				this->player->getPosition().y-32 * this->resolutionModifier, 0.f, -1.f, 5.f * this->resolutionModifier));
+				this->player->getPosition().y-32 * this->resolutionModifier, 0.f, -1.f, 5.f * this->resolutionModifier, true));
 	}
 }
 
@@ -285,7 +288,7 @@ void Game::updateEnemiesAndCombat()
 		//check collision with bullets
 		for (int k = 0; k < this->bullets.size() && !enemy_removed; k++) 
 		{
-			if(this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds()))
+			if(this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds()) && this->bullets[k]->getIsFriendly() == true)
 			{
 			
 				//substract hp from enemy - depends on player attack Power
@@ -332,6 +335,7 @@ void Game::updateEnemiesAndCombat()
 			}
 		}
 
+		
 		//check pattern and move enemy
 		if (!enemy_removed)
 		{
@@ -340,16 +344,31 @@ void Game::updateEnemiesAndCombat()
 			case 0:
 				break;
 			case 1:
-				if (this->enemies[i]->getMovementProgress() <= 50) {
-					this->enemies[i]->changePosition(0, 3.f);
+				if (this->enemies[i]->getMovementProgress() <= 10) {
+					this->enemies[i]->changePosition(0, 2.f);
+				}
+				else if (this->enemies[i]->getMovementProgress() <= 90) {
+					this->enemies[i]->changePosition(0, 5.f);
 					
+				}
+				else if (this->enemies[i]->getMovementProgress() <= 100) {
+					this->enemies[i]->changePosition(0, 2.f);
+				}
+				else if (this->enemies[i]->getMovementProgress() <= 110) {
+					this->enemies[i]->changePosition(0, -2.f);
+				}
+				else if(this->enemies[i]->getMovementProgress() <= 190)
+				{
+					this->enemies[i]->changePosition(0, -5.f);
 				}
 				else
 				{
-					this->enemies[i]->changePosition(0, -3.f);
+					this->enemies[i]->changePosition(0, -2.f);
 				}
-				if(this->enemies[i]->getMovementProgress() == 100){
-					this->enemies[i]->changeMovementProgress(-100);
+
+
+				if(this->enemies[i]->getMovementProgress() == 200){
+					this->enemies[i]->changeMovementProgress(-200);
 				}
 				else {
 					this->enemies[i]->changeMovementProgress(1);
@@ -362,6 +381,23 @@ void Game::updateEnemiesAndCombat()
 			}
 
 		}
+
+		//check if shoot coldown is down, if it is then shoot and proc a shoot coldown again
+
+		if (!enemy_removed) {
+			if (this->enemies[i]->getShootCooldown() <= 0) {
+				this->bullets.push_back(new Bullet(
+					this->textures["BULLET_ENEMY"],
+					this->enemies[i]->getPosition().x + 0 * this->resolutionModifier,
+					this->enemies[i]->getPosition().y + 60 * this->resolutionModifier, 0.f, 1.f, 3.f * this->resolutionModifier, false));
+				this->enemies[i]->changeShootCooldown(100);
+			}
+			else
+			{
+				this->enemies[i]->changeShootCooldown(this->enemies[i]->getShootCooldown() - 1);
+			}
+		}
+
 
 		//check end game condition
 		if (this->healthBar->getHp() <= 0)
@@ -383,7 +419,13 @@ void Game::updateBullets()
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
 			-- counter;
+		}else if (bullet->getBounds().top + bullet->getBounds().height > this->window->getSize().x * this->resolutionModifier)
+		{
+			delete this->bullets.at(counter);
+			this->bullets.erase(this->bullets.begin() + counter);
+			--counter;
 		}
+		
 		++counter;
 	}
 }
